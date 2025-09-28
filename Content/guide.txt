@@ -1,0 +1,78 @@
+EXPLAIN
+
+Think of WorldEngine.swift as the conductor of the orchestra. It doesn’t play the instruments itself; instead, it makes sure each one comes in at the right time and plays according to the sheet music. The “instruments” in this case are the other files you’ve set up. The world engine relies on these to function, and each one provides a different layer of support. Let’s walk through them.
+
+⸻
+
+1. Content/WorldInit.json
+This is the world engine’s starting sheet music. When the game begins, the engine loads this file and reads what the world should look like: how many factions exist, how many settlements per faction, what the scarcity level is, what the environment harshness is.
+	•	How WorldEngine uses it: it parses this file at init and builds entities accordingly.
+	•	What it needs: keys for initial world parameters (factions, settlementsPerFaction, scarcity, environmentStability, etc.).
+
+⸻
+
+2. Entities/Faction.swift
+Factions are political and cultural containers. Each faction has leaders, ideology, settlements, and relationships.
+	•	How WorldEngine uses it: it will instantiate factions based on WorldInit.json, assign them settlements, and then periodically update them (succession checks, alliances, conflicts).
+	•	What it needs: properties like name, leaders, settlements, reputation, and methods like updateFactionState().
+
+⸻
+
+3. Entities/Settlement.swift
+Settlements are the practical building blocks of the world. They house populations, infrastructure, and serve as nodes where events occur.
+	•	How WorldEngine uses it: it updates each settlement every tick—decreasing resource stores, checking infrastructure stability, spawning crises.
+	•	What it needs: anchors like waterSystem, powerSystem, defenseSystem, population values, and methods like updateSettlementState().
+
+⸻
+
+4. Entities/Character.swift
+Characters populate both factions and settlements. They include leaders, workers, and everyday people.
+	•	How WorldEngine uses it: for leader succession, worker morale, health, and as agents in events (e.g., “Oleg repairs the pump”).
+	•	What it needs: attributes like name, role, traits, health, morale, and methods like performAction().
+
+⸻
+
+5. Entities/EnvironmentNode.swift
+These represent physical locations beyond settlements—collapsed tunnels, ruins, resource sites, surface access points.
+	•	How WorldEngine uses it: as exploration nodes, event triggers, or hazards (collapse risk, contamination).
+	•	What it needs: properties like nodeType (tunnel, ruin, surface), stability, resourcesAvailable, and updateEnvironment().
+
+⸻
+
+6. Systems/StateMachine.swift
+This file is the rules engine for how states change. It’s not tied to one entity; instead, it describes transitions.
+	•	How WorldEngine uses it: when updating entities each tick, the engine calls the state machine to see if conditions are met for state changes (pump → degraded, character → injured, faction → succession crisis).
+	•	What it needs: generic definitions of states and transitions, with methods like evaluateTransition(entity) that can be applied universally.
+
+⸻
+
+7. Systems/EventSystem.swift
+This is the encounter engine. It listens for triggers—time, scarcity, player action, random rolls—and spawns events.
+	•	How WorldEngine uses it: each tick, it checks with EventSystem to see if an event should fire. If yes, it applies the event’s consequences to the relevant entities and logs outputs (text for the player).
+	•	What it needs: definitions for event types (RelicDiscovery, FactionRaid, Collapse), conditions, and effects.
+
+⸻
+
+8. Player/PlayerState.swift
+The player is a special entity with their own states, attributes, and relationships.
+	•	How WorldEngine uses it: it updates player state alongside world entities—reducing hunger, checking sanity, updating reputation with factions. It also routes some events directly to the player (e.g., discovery events, encounters).
+	•	What it needs: attributes (health, hunger, reputation, inventory), states (satiated, starving, wounded), and methods to interact with world entities.
+
+⸻
+
+So in summary, the dependencies of WorldEngine are:
+	•	Content (for initialization and narrative hooks).
+	•	Entities (the world’s building blocks).
+	•	Systems (rules and event logic that make things change).
+	•	PlayerState (the special entity the player inhabits).
+
+The WorldEngine itself doesn’t hardcode details—it just calls these pieces in order. Each tick it:
+	1.	Reads and updates all entities.
+	2.	Runs those entities through the state machine to check for changes.
+	3.	Asks the event system if anything is triggered.
+	4.	Updates the player state alongside everything else.
+	5.	Returns results in a way that the UI can show to the player.
+
+That’s how you get a framework where Scorn (underground collapse) is just one skin. Swap out WorldInit.json and the content files, and the engine could simulate underwater domes or a Martian outpost with no code changes.
+
+Do you want me to now map out the exact order of operations a tick should follow inside WorldEngine, so you have a blueprint for how all these files talk to each other?

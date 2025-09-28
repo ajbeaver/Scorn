@@ -1,0 +1,267 @@
+Tangibles Document – Expanded Scaffold (Canon-Aligned)
+
+1. Factions
+   1.1 Components
+       - Leadership Structure
+         - Single Leader
+         - Council
+         - Appointed Overseer
+         - Charismatic Figure
+         - Cult Leadership
+       - Membership Base
+         - Core Cadres
+         - Militia/Auxiliaries
+         - Specialists (Engineers, Medics, Scribes)
+         - Civilians/Subjects
+       - Infrastructure & Lifelines
+         - Air Systems (Intakes, Filters, Fans, Ducts)
+         - Water Systems (Pumps, Purifiers, Cisterns, Pipes)
+         - Power Systems (Geothermal Taps, Generators, Biofuel Rigs, Battery Banks)
+         - Defenses (Bulkheads, Barricades, Turrets, Patrols)
+         - Logistics (Stores, Workshops, Depots, Repair Bays)
+       - Capital & Territory
+         - Capital Settlement
+         - Outposts
+         - Control Corridors
+         - Buffer Zones
+       - Resources & Assets
+         - Food (Fungal Farms, Vats, Stores)
+         - Materials (Scrap, Ore, Chemicals)
+         - Machinery (Tunnelers, Drills, Loaders)
+         - Knowledge Stores (Archives, Maps, Ledgers)
+       - Identity & Communication
+         - Colors & Symbols
+         - Graffiti & Signage
+         - Slogans & Proclamations
+         - Channels (Runners, Speakers, Bulletin Walls)
+       - Governance & Policy
+         - Ration Rules
+         - Law & Justice
+         - Recruitment & Conscription
+         - Trade Policy
+   1.2 States
+       - Active
+         - Infrastructure Secure
+         - Recruitment Ongoing
+         - Patrols Present
+       - Dormant
+         - Low Activity
+         - Leadership Weakened/Absent
+         - Holdings Static
+       - Hostile
+         - Raids Authorized
+         - Borders Closed
+         - Propaganda Escalated
+       - Allied
+         - Trade Corridors Open
+         - Mutual Defense
+         - Shared Maintenance
+   1.3 Transitions
+       - Recruitment
+       - Succession (Death/Resignation/Coup → New Leader)
+       - Alliance Formation (Treaty/Pledge/Hostage Exchange)
+       - Conflict Engagement (Raid/Siege/Defense)
+       - Capital Loss (Seizure/Evacuation → Fragmentation)
+       - Fragmentation (Splinter Groups/Defections)
+       - Consolidation (Annexation/Unification)
+
+Factions are durable social structures bound by leadership, lifelines, and a capital. Their tangible footprint is visible in machines, stores, ledgers, corridors, and marks on stone. States and transitions describe how a faction changes when leaders fall, lifelines fail, or borders shift.
+
+2. Settlements
+   2.1 Components
+       - Population Demographics
+         - Residents
+         - Transients
+         - Labor Mix (Operators, Guards, Carriers, Scribes)
+         - Health Profile (Disease Load, Injury Rate)
+       - Infrastructure (Anchors)
+         - Air (Intakes, Filters, Fans, Ducts)
+         - Water (Pumps, Purifiers, Cisterns, Distribution)
+         - Power (Geothermal Tap, Generator Room, Biofuel Digesters, Battery Banks)
+         - Light (Light Farms, Lamps, Emergency Strips)
+         - Defenses (Bulkheads, Chokepoints, Watch Posts, Turrets)
+         - Digging (Tunnelers, Drills, Spoil Conveyors)
+         - Waste & Recycling (Composters, Methane Rigs, Slag Pits)
+       - Layout & Facilities
+         - Halls & Plazas
+         - Markets & Storerooms
+         - Workshops & Machine Bays
+         - Clinics & Infirmaries
+         - Libraries & Record-Rooms
+         - Barracks & Cells
+       - Economy
+         - Production (Fungal, Vats, Parts)
+         - Trade Goods (Water Credits, Scrap, Tools)
+         - Services (Repair, Guarding, Courier)
+       - Governance
+         - Council
+         - Overseer
+         - Faction Appointee
+         - Rotating Duties
+   2.2 States
+       - Thriving
+         - Anchors Stable
+         - Surplus Stores
+         - Low Unrest
+       - Declining
+         - Anchors Fragile
+         - Shortages
+         - Emigration
+       - Under Siege
+         - Blockade/Raids
+         - Damage Accruing
+         - Ration Tightening
+       - Rebuilding
+         - Repairs Underway
+         - Aid Received
+         - Population Returning
+   2.3 Transitions
+       - Growth (Excavate Chamber/Upgrade Facility/Population Influx)
+       - Decline (Maintenance Failure/Contamination/Leadership Breakdown)
+       - Conquest (Faction Takeover/Capital Redesignation)
+       - Recovery (Anchor Restored/Aid Convoys Reopened)
+       - Evacuation (Orderly/Stampede)
+       - Collapse (Anchor Lost/Structure Unsound)
+
+Settlements are physical anchors of life: pumps, halls, lights, and gates. Their health is measured by the state of anchors, the presence of stores, and the strain on defenses. Transitions trace how places expand, fail, are taken, or rebuilt.
+
+3. Environment
+   3.1 Components
+       - Subterranean Geometry
+         - Tunnels
+         - Shafts
+         - Caverns
+         - Collapse Zones
+       - Air Systems
+         - Intakes
+         - Filters
+         - Fans
+         - Duct Networks
+       - Water Systems
+         - Aquifers
+         - Pumps
+         - Cisterns
+         - Pipes
+       - Power & Energy
+         - Geothermal Vents
+         - Salvaged Generators
+         - Biofuel Digesters
+         - Battery Banks
+         - Human Labor
+       - Hazards
+         - Toxic Plumes
+         - Cave-Ins
+         - Floods
+         - Fire/Arc
+         - Biological Bloom
+       - Surface Conditions
+         - Corrosive Air
+         - Radiation Hotspots
+         - Ruin Fields
+   3.2 States
+       - Stable
+         - Air Quality Acceptable
+         - Water Pure
+         - Low Collapse Risk
+       - Degraded
+         - Filters Fouled
+         - Contaminated Water
+         - Structural Stress
+       - Recovering
+         - Repairs Ongoing
+         - Purge Cycles Running
+       - Exploited
+         - Over-Mined
+         - Aquifers Overdrawn
+   3.3 Transitions
+       - Natural Cycles (Pressure Shifts/Seep Variations)
+       - Human Impact (Over-Extraction/Improper Disposal/Sabotage)
+       - Catastrophic Events (Major Cave-In/Shaft Breach/Firestorm)
+       - Restoration Efforts (Filter Replacement/Grouting & Shoring/Decontamination Flush)
+
+The environment is not backdrop but the condition of life: air, water, energy, and stone. Its states determine risk and its transitions set the stage for crises and recovery.
+
+4. Culture
+   4.1 Components
+       - Beliefs & Values
+         - Survival Ethic
+         - Duty to Collective
+         - Distrust of Surface
+       - Traditions & Rituals
+         - Ration Ceremonies
+         - Recycling of Dead
+         - Pre-Dig Observances
+         - Oath-Taking
+       - Language & Communication
+         - Slogans
+         - Warning Codes
+         - Oral Histories
+         - Broadcast Styles
+       - Art & Expression
+         - Graffiti Motifs
+         - Symbol Sets
+         - Memorial Walls
+         - Library Curation
+   4.2 States
+       - Flourishing
+         - Active Arts & Records
+         - Shared Rites
+       - Suppressed
+         - Censorship
+         - Prohibitions
+       - Evolving
+         - Syncretism
+         - New Rites
+       - Fragmented
+         - Conflicting Norms
+         - Lost Archives
+   4.3 Transitions
+       - Cultural Exchange (Traders/Migrants Carry Rites & Sayings)
+       - Assimilation (Local Adoption/Language Shift)
+       - Revival (Archive Rediscovered/Leader Sponsors Rite)
+       - Decline (Loss by Attrition/Ban & Forgetting)
+
+Culture binds memory to practice. Its tangible forms are words on walls, ceremonies at scales, records in cabinets, and the habits that outlive any single leader.
+
+5. General Rules
+   5.1 Components
+       - Interaction Protocols
+         - Neutral Corridors
+         - Toll Checkpoints
+         - Convoy Rules
+         - Hostage Exchange
+       - Conflict Resolution Mechanisms
+         - Council Arbitration
+         - Trial by Testimony
+         - Sanctioned Duels
+         - Reparations
+       - Resource Management Guidelines
+         - Ration Schedules
+         - Maintenance Cycles
+         - Quotas & Audits
+         - Recycling Mandates
+       - Progression Systems
+         - Settlement Upgrades
+         - Faction Tiering
+         - Tech Adoption
+         - Reputation Tracks
+   5.2 States
+       - Enforced
+         - Compliance High
+         - Penalties Applied
+       - Violated
+         - Smuggling
+         - Black Market
+       - Adapted
+         - Local Exceptions
+         - Emergency Rules
+       - Deprecated
+         - Custom Abandoned
+         - Superseded Law
+   5.3 Transitions
+       - Rule Implementation (Proclamation Posted/Training Conducted)
+       - Enforcement Actions (Patrols/Audits/Sanctions)
+       - Amendments (Council Edits/Faction Decree)
+       - Obsolescence (Habit Replaces Rule/New System Adopted)
+
+General rules turn habit into order. They describe how tunnels remain traversable, trade remains possible, and disputes do not end every corridor in blood. Their transitions explain how norms spread, harden, bend, and vanish.

@@ -1,0 +1,121 @@
+1. NPC Voices  
+   1.1 Leaders  
+       - Tone: Authoritative, commanding, resolute  
+       - Style: Formal diction, measured pacing, confident assertions  
+   1.2 Cultists  
+       - Tone: Zealous, fervent, unsettling  
+       - Style: Repetitive phrasing, cryptic references, ritualistic cadence  
+   1.3 Scavengers  
+       - Tone: Pragmatic, wary, terse  
+       - Style: Colloquial language, fragmented sentences, cautious tone  
+   1.4 Historians  
+       - Tone: Scholarly, reflective, precise  
+       - Style: Complete sentences, technical vocabulary, explanatory tone  
+   1.5 Engineers  
+       - Tone: Analytical, methodical, pragmatic  
+       - Style: Technical jargon, concise explanations, solution-oriented language  
+
+
+   1.6 Faction Modifiers  
+       - Militaristic  
+           - Tone: Curt, hierarchical, uncompromising  
+           - Style: Command verbs, time stamps, numeric references (shifts, quotas)  
+       - Communal  
+           - Tone: Inclusive, steady, duty‑bound  
+           - Style: We/our language, mutual obligations, plain courtesy  
+       - Technocratic  
+           - Tone: Detached, precise, constraint‑aware  
+           - Style: System terminology (cycles, tolerances, outputs), cause/effect phrasing  
+       - Ascetic/Cultic  
+           - Tone: Reverent, severe, fatalistic  
+           - Style: Liturgical cadence, aphorisms, avoidance of direct questions  
+       - Merchant/Smuggler  
+           - Tone: Cautious, opportunistic, dry  
+           - Style: Indirection, euphemism, numbers‑as‑code (weights, lots)  
+
+   Purpose: This section defines distinct vocal profiles for NPC archetypes to ensure consistency in dialogue delivery. Each voice reflects the character’s role and worldview, enhancing immersion and narrative clarity. The tone and style guidelines help writers maintain appropriate language registers and emotional resonance.
+
+2. Graffiti & Slogans  
+   2.1 ASCII Banners  
+       - Usage: Decorative faction identifiers or thematic motifs  
+       - Formatting: Monospaced font, aligned characters, minimal complexity  
+   2.2 Slogans  
+       - Usage: Short, impactful phrases conveying faction ideology or warnings  
+       - Formatting: Uppercase preferred, occasional line breaks for emphasis  
+   2.3 Faction Tags  
+       - Usage: Abbreviations or symbols marking territory or allegiance  
+       - Formatting: Consistent placement, enclosed in brackets or stylized markers  
+
+
+   2.4 Dialects & Literacy  
+       - Usage: Reflect faction culture and education level; marks may warn, boast, decree, or memorialize  
+       - Formatting: Allow variation in spelling, symbol density, and complexity; layering/overwriting signals dispute  
+       - Register: Authoritarian (decrees), folk (warnings), and trade (rates/terms) registers should be distinct  
+       - Attribution: Optional initials, sigils, or date‑stamps permitted for organized cells and patrol units  
+
+   Purpose: Graffiti and slogans serve as environmental storytelling devices. Their design must be visually distinct and thematically coherent, reinforcing faction identity and setting tone without disrupting gameplay readability.
+
+3. Historian Entries & Writings  
+   3.1 Tone  
+       - Objective, analytical, occasionally speculative but grounded in evidence  
+   3.2 Format  
+       - Structured paragraphs, citations where applicable, dated entries  
+   3.3 Consistency  
+       - Uniform terminology, chronological ordering, clear source attribution  
+
+
+   3.4 Perspective & Bias  
+       - Institutional Bias: Corporate logs privilege compliance; faction archives justify policy  
+       - Personal Bias: Diaries and oral accounts reveal fear, pride, omission  
+       - Redaction: Censored names, missing lines, and [illegible] markers may appear in recovered texts  
+       - Uncertainty Markers: “likely,” “contested,” “apocryphal” are acceptable when evidence is incomplete  
+
+   Purpose: Historian texts provide background lore and context. Maintaining a formal, consistent style ensures credibility and aids player comprehension. Entries should balance informativeness with narrative engagement.
+
+4. Cutscene-Style Prose  
+   4.1 Delivery Conventions  
+       - Present tense preferred, active voice, direct sensory descriptions  
+   4.2 Sensory Focus  
+       - Emphasis on visual, auditory, and tactile elements to immerse the player  
+   4.3 Formatting  
+       - Paragraph breaks aligned with scene shifts, minimal italics or emphasis  
+
+
+   4.4 Pacing  
+       - Urgency: Short lines, frequent breaks, action‑first verbs  
+       - Atmosphere: Longer paragraphs, sensory layering, slow reveal  
+       - Pivot Beats: One‑line breakers to mark realization, threat, or turn  
+       - Length: Target 3–8 paragraphs; avoid uninterrupted walls of text  
+
+   Purpose: Cutscene prose conveys narrative progression dynamically. Clear, vivid descriptions and consistent formatting enhance storytelling impact and player immersion.
+
+5. Dialogue Formatting  
+   5.1 Spoken Dialogue  
+       - Enclosed in quotation marks, preceded by speaker attribution  
+   5.2 Narration  
+       - Plain text paragraphs without quotation marks, third-person perspective  
+   5.3 Graffiti  
+       - Distinct font or style, often uppercase or stylized text blocks  
+   5.4 System Text  
+       - Informational messages, alerts, or prompts, formatted for clarity and brevity  
+
+
+   5.5 Density & Cadence  
+       - Exchange Length: Keep back‑and‑forth to 1–4 lines before a beat  
+       - Chunking: Split long monologues with environmental reactions or player prompts  
+       - Frequency: Prefer fewer, weightier lines over constant chatter  
+       - Clarity: Do not interleave system alerts with spoken lines in the same beat  
+
+   Purpose: Differentiating text types visually and structurally prevents confusion and guides player interpretation. Adhering to formatting conventions supports readability and narrative flow.
+
+6. Tonal Boundaries  
+   6.1 Serious  
+       - Maintain gravity appropriate to post-apocalyptic themes  
+   6.2 Bleak  
+       - Reflect harsh realities without gratuitous despair  
+   6.3 Unsettling  
+       - Employ ambiguity and tension to evoke discomfort  
+   6.4 Avoidance of Humor or Levity  
+       - Unless intentionally unnerving, humor is excluded to preserve tone  
+
+   Purpose: Establishing tonal limits ensures the narrative remains cohesive and thematically consistent. Writers should avoid elements that undermine the intended atmosphere unless purposefully subverting expectations.

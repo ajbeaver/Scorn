@@ -1,0 +1,147 @@
+1. Relic Encounters
+
+Tree:
+- Discovery
+  - Site Exploration
+  - Artifact Unearthing
+- Analysis
+  - Initial Examination
+  - Expert Consultation
+- Consequence
+  - Power Activation
+  - Curse Manifestation
+
+Description:
+Relic Encounters represent moments when players or characters come across ancient artifacts imbued with historical significance or supernatural power. These encounters are triggered by exploration, quests, or chance events within the world. The process typically begins with discovery, where the relic is found through site exploration or excavation. Following discovery, analysis involves examining the artifact, either personally or through experts, to understand its properties and origins. The consequences of interacting with relics can vary widely, from unlocking new abilities or knowledge to unleashing curses or unforeseen dangers. These encounters enrich the narrative by connecting characters to the world's past and providing tangible stakes for exploration.
+
+2. Historian Writings
+
+Tree:
+- Document Retrieval
+  - Library Search
+  - Private Collection Access
+- Interpretation
+  - Translation
+  - Contextual Analysis
+- Revelation
+  - Historical Insight
+  - Hidden Truths
+
+Description:
+Historian Writings encompass the discovery and study of texts, manuscripts, or records that shed light on the world's history and lore. Triggered by research activities or story progression, these writings offer players access to deeper understanding of cultures, events, and mysteries. The process starts with retrieving documents from libraries or private collections, followed by interpretation through translation and contextual analysis to grasp their meaning accurately. The revelations gained can inform player decisions, reveal hidden truths, or unlock new narrative threads. This framework supports world-building and encourages players to engage with the intellectual heritage of the setting.
+
+3. Faction Events
+
+Tree:
+- Initiation
+  - Diplomatic Contact
+  - Covert Operation
+- Development
+  - Alliance Formation
+  - Conflict Escalation
+- Resolution
+  - Treaty Signing
+  - Open Warfare
+
+Description:
+Faction Events capture the dynamic interactions between organized groups within the world, such as political entities, guilds, or tribes. These events are triggered by player actions, narrative milestones, or environmental factors. The initial phase involves initiating contact or operations that set the stage for faction relations. Development sees the evolution of these relations, whether through alliances or escalating tensions. The resolution phase concludes the event with outcomes like treaties or warfare that significantly impact the world state. This framework allows players to influence and experience the complex socio-political landscape, adding depth and consequence to their choices.
+
+4. Environmental Crises
+
+Tree:
+- Warning Signs
+  - Natural Phenomena
+  - Early Reports
+- Escalation
+  - Resource Scarcity
+  - Habitat Destruction
+- Impact
+  - Population Displacement
+  - Ecosystem Collapse
+
+Description:
+Environmental Crises represent significant disruptions to the natural world that affect both the setting and its inhabitants. These crises are triggered by natural events, human activity, or supernatural forces. Warning signs serve as early indicators, such as unusual weather or initial reports from affected areas. Escalation involves worsening conditions like resource shortages or environmental degradation. The impact phase entails serious consequences including displacement of populations or collapse of ecosystems. This framework emphasizes the interconnectedness of the environment and society, challenging players to respond to urgent and evolving threats that shape the world’s future.
+
+5. Cultural Rituals & Practices
+
+Tree:
+- Preparation
+  - Gathering Materials
+  - Learning Traditions
+- Performance
+  - Ceremony Execution
+  - Community Participation
+- Aftermath
+  - Social Bonding
+  - Cultural Transmission
+
+Description:
+Cultural Rituals & Practices encompass the ceremonies, customs, and traditions that define the identity of groups within the world. Triggered by calendar events, life milestones, or narrative triggers, these rituals involve preparation by gathering necessary materials and understanding traditional protocols. The performance phase brings the community together in shared experience, reinforcing social bonds. The aftermath includes the transmission of cultural knowledge and strengthening of group identity. This framework highlights the importance of culture in shaping character motivations and social dynamics, offering immersive opportunities for players to engage with the world’s diversity.
+
+6. Cascading & Linked Events
+
+Tree:
+- Trigger Event
+  - Initial Incident
+  - Player Choice
+- Chain Reaction
+  - Secondary Effects
+  - Unintended Consequences
+- Resolution
+  - Stabilization
+  - New Equilibrium
+
+Description:
+Cascading & Linked Events refer to sequences where one event leads to a series of connected outcomes, often influenced by player decisions or environmental factors. Trigger events initiate the chain, which can be an incident or a deliberate choice. The chain reaction phase unfolds as secondary effects and unintended consequences emerge, creating complex narrative webs. Resolution involves stabilizing the situation or establishing a new status quo. This framework captures the complexity and interconnectivity of the world, emphasizing the impact of actions and fostering emergent storytelling through cause and effect.
+
+
+7. Delivery & Modularity
+
+Tree:
+- Encounter Design
+  - Component Selection
+  - Trigger Configuration
+- Integration
+  - Narrative Embedding
+  - Gameplay Balancing
+- Deployment
+  - Dynamic Insertion
+  - Player Feedback
+
+Description:
+Delivery & Modularity focuses on the practical aspects of constructing and implementing encounters within the game world. The design phase involves selecting appropriate components and configuring triggers to create meaningful interactions. Integration ensures that encounters fit seamlessly into the narrative and maintain gameplay balance. Deployment covers the dynamic insertion of encounters into the player’s experience and the collection of feedback to refine future content. This framework supports flexible and scalable encounter creation, enabling a responsive and engaging world that adapts to player actions and evolving narratives.
+
+8. Player-State Driven Encounters
+
+Tree:
+- Triggers
+  - Hunger / Starvation
+  - Injury / Critical Health
+  - Reputation (Trusted / Outlawed)
+  - Cultural Marks (Graffiti, Sayings)
+- Outcomes
+  - Modified Encounter Types
+  - New Encounter Availability
+  - Heightened Risks
+
+Description:
+Player-State Driven Encounters dynamically adjust the availability and nature of encounters based on the player’s current condition, such as attributes, resources, and reputation. Triggers like hunger, injury, social standing, or visible cultural marks influence which encounters appear or how they unfold. Outcomes include modified types of encounters, unlocking new possibilities, or introducing greater risks depending on the player’s state. This framework bridges PlayerState and world events, ensuring the player’s personal narrative and choices are directly reflected in the evolving world, fostering deeper immersion and reactivity.
+
+9. Sandbox Continuity Events
+
+Tree:
+- Recurring Cycles
+  - Succession Struggles
+  - Seasonal Rituals
+  - Trade Caravans
+- Periodic Crises
+  - Tunnel Collapses
+  - Resource Contamination
+  - Power Shortages
+- Long-Term Variations
+  - Settlement Growth
+  - Faction Fragmentation
+  - Cultural Shifts
+
+Description:
+Sandbox Continuity Events ensure the game world remains active and dynamic even after the main narrative arc concludes. Recurring cycles such as leadership changes, seasonal happenings, and economic activities maintain a living environment. Periodic crises like collapses or shortages introduce new challenges and opportunities for emergent play. Long-term variations reflect the evolving state of settlements, factions, and cultures over time. This framework supports replayability and emergent storytelling, allowing players to experience a world that continues to change, adapt, and surprise in sandbox mode.
