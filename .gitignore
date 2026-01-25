@@ -1,0 +1,54 @@
+
+
+# ----------------------------
+# Python
+# ----------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# ----------------------------
+# OS / Editor
+# ----------------------------
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ----------------------------
+# Logs / Runtime Artifacts
+# ----------------------------
+*.log
+*.tmp
+
+# ----------------------------
+# Test / Debug Artifacts
+# ----------------------------
+*.prof
+*.coverage
+htmlcov/
+
+# ----------------------------
+# Generated Data / Dumps
+# ----------------------------
+dump_*.json
+world_*.json
+
+# ----------------------------
+# Secrets (never commit)
+# ----------------------------
+.env
+.env.*
+secrets/
