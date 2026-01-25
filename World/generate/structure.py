@@ -8,7 +8,6 @@ Pure construction, no simulation.
 import random
 
 from World import constants
-from World import schema
 
 
 def generate_structure(structure_seed: int) -> dict:
@@ -45,8 +44,6 @@ def generate_structure(structure_seed: int) -> dict:
     # ----------------------------
     # Validation
     # ----------------------------
-
-    schema.validate_structure(structure)
 
     return structure
 

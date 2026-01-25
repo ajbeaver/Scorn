@@ -8,7 +8,6 @@ Defines traversal cost, isolation, and contained settlements.
 import random
 
 from World import constants
-from World import schema
 from World.generate import settlement
 
 
@@ -44,9 +43,5 @@ def generate_area(area_seed: int) -> dict:
         settlement_seed = area_seed * 1000 + i
         s = settlement.generate_settlement(settlement_seed)
         area["settlements"].append(s)
-
-    # ----------------------------
-    # Validation
-    # ----------------------------
 
     return area

@@ -28,7 +28,6 @@ except ValueError:
 # ----------------------------
 
 from World import constants
-from World import schema
 from World.world import generate_world
 
 # Explicit generator imports to surface missing __init__.py
@@ -103,8 +102,6 @@ def assert_world_shape(world: dict) -> None:
 
 world_a = generate_world(WORLD_SEED)
 world_b = generate_world(WORLD_SEED)
-
-# Schema validation must pass both times
 
 # Structural sanity
 assert_world_shape(world_a)

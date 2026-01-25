@@ -8,9 +8,6 @@ No simulation, no time, no player.
 import random
 
 from World import constants
-from World import schema
-from World import seeds
-
 
 def generate_settlement(settlement_seed: int) -> dict:
     """
@@ -115,9 +112,5 @@ def generate_settlement(settlement_seed: int) -> dict:
                 constants.ROOM_MAX,
             ),
         })
-
-    # ----------------------------
-    # Validation (Schema Guard)
-    # ----------------------------
 
     return settlement

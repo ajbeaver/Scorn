@@ -8,8 +8,8 @@ Builds a deterministic world snapshot from a single seed.
 import random
 
 from World import constants
-from World import schema
 from World.generate import area
+from World.validate import validate_world
 
 
 def generate_world(world_seed: int) -> dict:
@@ -42,4 +42,5 @@ def generate_world(world_seed: int) -> dict:
     # Validation
     # ----------------------------
 
+    validate_world(world)
     return world
