@@ -25,8 +25,14 @@ def generate_area(area_seed: int) -> dict:
             constants.AREA_TRAVEL_COST_MIN,
             constants.AREA_TRAVEL_COST_MAX,
         ),
-        "danger_level": rng.uniform(0.0, 1.0),
-        "isolation": rng.uniform(0.0, 1.0),
+        "danger_level": rng.uniform(
+            constants.AREA_DANGER_MIN,
+            constants.AREA_DANGER_MAX,
+        ),
+        "isolation": rng.uniform(
+            constants.AREA_ISOLATION_MIN,
+            constants.AREA_ISOLATION_MAX,
+        ),
         "settlements": [],
     }
 
@@ -41,7 +47,7 @@ def generate_area(area_seed: int) -> dict:
 
     for i in range(settlement_count):
         settlement_seed = area_seed * 1000 + i
-        s = settlement.generate_settlement(settlement_seed)
+        s = settlement.generate_settlement(settlement_seed, area["isolation"], area["traversal_cost"], area["danger_level"])
         area["settlements"].append(s)
 
     return area

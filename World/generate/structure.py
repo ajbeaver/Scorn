@@ -10,20 +10,18 @@ import random
 from World import constants
 
 
-def generate_structure(structure_seed: int) -> dict:
+def generate_structure(structure_seed: int, structure_type: str, scale: float, danger: float) -> dict:
     """
     Create a structure with rooms from a seed.
     """
 
     rng = random.Random(structure_seed)
 
-    structure_type = rng.choice(constants.STRUCTURE_TYPES)
-
     structure = {
         "id": structure_seed,
         "type": structure_type,
-        "condition": rng.uniform(0.5, 1.0),
-        "scale": rng.choice(constants.STRUCTURE_SCALES),
+        "condition": max(0.0, 1.0 - danger),
+        "scale": scale,
         "rooms": [],
     }
 
@@ -31,14 +29,11 @@ def generate_structure(structure_seed: int) -> dict:
     # Room Count
     # ----------------------------
 
-    room_count = rng.randint(
-        constants.ROOM_MIN,
-        constants.ROOM_MAX,
-    )
+    room_count = max(1, int(scale * constants.STRUCTURE_ROOMS_PER_SCALE))
 
     for i in range(room_count):
         room_seed = structure_seed + i + 1
-        room = generate_room(room_seed, structure_type)
+        room = generate_room(room_seed, structure_type, danger)
         structure["rooms"].append(room)
 
     # ----------------------------
@@ -48,7 +43,7 @@ def generate_structure(structure_seed: int) -> dict:
     return structure
 
 
-def generate_room(room_seed: int, structure_type: str) -> dict:
+def generate_room(room_seed: int, structure_type: str, danger: float) -> dict:
     """
     Create a single room.
     """
@@ -63,8 +58,8 @@ def generate_room(room_seed: int, structure_type: str) -> dict:
         "id": room_seed,
         "type": room_type,
         "size": rng.choice(constants.ROOM_SIZES),
-        "resource_bias": rng.uniform(0.0, 1.0),
-        "danger_bias": rng.uniform(0.0, 1.0),
+        "resource_bias": 1.0,
+        "danger_bias": danger,
     }
 
     return room
