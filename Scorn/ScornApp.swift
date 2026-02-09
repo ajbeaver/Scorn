@@ -1,3 +1,10 @@
+//
+//  ScornApp.swift
+//  Scorn
+//
+//  Created by bea on 2/9/26.
+//
+
 import SwiftUI
 
 @main
