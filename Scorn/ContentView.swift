@@ -10,6 +10,7 @@ internal import Combine
 
 struct ContentView: View {
     @State private var bannerLines: [String] = ASCIIArt.base
+    @State private var screen: MenuScreen = .main
     private let timer = Timer.publish(every: 1.4, on: .main, in: .common).autoconnect()
 
     var body: some View {
@@ -29,9 +30,19 @@ struct ContentView: View {
                     bannerLines = ASCIIArt.flicker(from: ASCIIArt.base)
                 }
 
-                VStack(spacing: 14) {
-                    MenuOption(title: "New")
-                    MenuOption(title: "Continue")
+                switch screen {
+                case .main:
+                    MainMenuView { selection in
+                        screen = selection
+                    }
+                case .play:
+                    PlaySubmenuView {
+                        screen = .main
+                    }
+                case .settings:
+                    SettingsMenuView {
+                        screen = .main
+                    }
                 }
             }
             .padding(.horizontal, 28)
@@ -40,20 +51,71 @@ struct ContentView: View {
     }
 }
 
-private struct MenuOption: View {
-    let title: String
+private struct MainMenuView: View {
+    let onSelect: (MenuScreen) -> Void
 
     var body: some View {
-        Text(title)
-            .font(.system(size: 18, weight: .regular, design: .monospaced))
-            .foregroundColor(.white)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
-            .overlay(
-                Rectangle()
-                    .stroke(ScornColor.red, lineWidth: 1.5)
-            )
+        VStack(spacing: 14) {
+            MenuOption(title: "Play") {
+                onSelect(.play)
+            }
+            MenuOption(title: "Settings") {
+                onSelect(.settings)
+            }
+        }
     }
+}
+
+private struct PlaySubmenuView: View {
+    let onBack: () -> Void
+
+    var body: some View {
+        VStack(spacing: 14) {
+            MenuOption(title: "New Game")
+            MenuOption(title: "Continue")
+            MenuOption(title: "Back") {
+                onBack()
+            }
+        }
+    }
+}
+
+private struct SettingsMenuView: View {
+    let onBack: () -> Void
+
+    var body: some View {
+        VStack(spacing: 14) {
+            MenuOption(title: "Back") {
+                onBack()
+            }
+        }
+    }
+}
+
+private struct MenuOption: View {
+    let title: String
+    var action: (() -> Void)?
+
+    var body: some View {
+        Button(action: { action?() }) {
+            Text(title)
+                .font(.system(size: 18, weight: .regular, design: .monospaced))
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 12)
+                .overlay(
+                    Rectangle()
+                        .stroke(ScornColor.red, lineWidth: 1.5)
+                )
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+private enum MenuScreen {
+    case main
+    case play
+    case settings
 }
 
 private enum ScornColor {
@@ -64,10 +126,10 @@ private enum ScornColor {
 
 private enum ASCIIArt {
     static let base: [String] = [
-        " oooooooo8    oooooooo8   ooooooo  oooooooooo  oooo   oooo ",
+        " oooooooo8    oooooooo8    ooooooo  oooooooooo  oooo   oooo ",
         " 888         o888     88 o888   888o 888    888  8888o  88  ",
         "  888oooooo  888         888     888 888oooo88   88 888o88  ",
-        "        888 888o     oo 888o   o888 888  88o    88   8888  ",
+        "        888  888o     oo 888o   o888 888  88o    88   8888  ",
         " o88oooo888   888oooo88    88ooo88  o888o  88o8 o88o    88  "
     ]
 
