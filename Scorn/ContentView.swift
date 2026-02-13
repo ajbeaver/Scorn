@@ -11,6 +11,7 @@ internal import Combine
 struct ContentView: View {
     @State private var bannerLines: [String] = ASCIIArt.base
     @State private var screen: MenuScreen = .main
+    @State private var showingNewGameIntro = false
     private let timer = Timer.publish(every: 1.4, on: .main, in: .common).autoconnect()
 
     var body: some View {
@@ -36,9 +37,14 @@ struct ContentView: View {
                         screen = selection
                     }
                 case .play:
-                    PlaySubmenuView {
-                        screen = .main
-                    }
+                    PlaySubmenuView(
+                        onNewGame: {
+                            showingNewGameIntro = true
+                        },
+                        onBack: {
+                            screen = .main
+                        }
+                    )
                 case .settings:
                     SettingsMenuView {
                         screen = .main
@@ -47,6 +53,13 @@ struct ContentView: View {
             }
             .padding(.horizontal, 28)
             .padding(.vertical, 40)
+            .opacity(showingNewGameIntro ? 0 : 1)
+            .animation(.easeOut(duration: 0.3), value: showingNewGameIntro)
+
+            if showingNewGameIntro {
+                NewGameIntroView()
+                    .transition(.opacity)
+            }
         }
     }
 }
@@ -67,11 +80,14 @@ private struct MainMenuView: View {
 }
 
 private struct PlaySubmenuView: View {
+    let onNewGame: () -> Void
     let onBack: () -> Void
 
     var body: some View {
         VStack(spacing: 14) {
-            MenuOption(title: "New Game")
+            MenuOption(title: "New Game") {
+                onNewGame()
+            }
             MenuOption(title: "Continue")
             MenuOption(title: "Back") {
                 onBack()
@@ -118,13 +134,13 @@ private enum MenuScreen {
     case settings
 }
 
-private enum ScornColor {
+enum ScornColor {
     static let red = Color(red: 0.82, green: 0.08, blue: 0.08)
 }
 
 
 
-private enum ASCIIArt {
+enum ASCIIArt {
     static let base: [String] = [
         " oooooooo8    oooooooo8    ooooooo  oooooooooo  oooo   oooo ",
         " 888         o888     88 o888   888o 888    888  8888o  88  ",
