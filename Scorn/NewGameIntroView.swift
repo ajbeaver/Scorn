@@ -6,6 +6,7 @@
 import SwiftUI
 
 struct NewGameIntroView: View {
+    let onContinue: () -> Void
     @State private var overlayOpacity: Double = 0
     @State private var bannerOpacity: Double = 0
     @State private var bannerLines: [String] = ASCIIArt.base
@@ -73,7 +74,9 @@ struct NewGameIntroView: View {
                         .layoutPriority(1)
 
                     if showContinue {
-                        Button(action: {}) {
+                        Button(action: {
+                            onContinue()
+                        }) {
                             Text("Continue")
                                 .font(.system(size: 18, weight: .regular, design: .monospaced))
                                 .foregroundColor(.white)

@@ -12,6 +12,7 @@ struct ContentView: View {
     @State private var bannerLines: [String] = ASCIIArt.base
     @State private var screen: MenuScreen = .main
     @State private var showingNewGameIntro = false
+    @State private var showingGame = false
     private let timer = Timer.publish(every: 1.4, on: .main, in: .common).autoconnect()
 
     var body: some View {
@@ -49,16 +50,36 @@ struct ContentView: View {
                     SettingsMenuView {
                         screen = .main
                     }
+                case .game:
+                    EmptyView()
                 }
             }
             .padding(.horizontal, 28)
             .padding(.vertical, 40)
-            .opacity(showingNewGameIntro ? 0 : 1)
-            .animation(.easeOut(duration: 0.3), value: showingNewGameIntro)
+            .opacity((showingNewGameIntro || showingGame) ? 0 : 1)
+            .animation(.easeOut(duration: 0.3), value: showingNewGameIntro || showingGame)
 
             if showingNewGameIntro {
-                NewGameIntroView()
+                NewGameIntroView(
+                    onContinue: {
+                        withAnimation(.easeOut(duration: 0.25)) {
+                            showingNewGameIntro = false
+                            showingGame = true
+                            screen = .game
+                        }
+                    }
+                )
                     .transition(.opacity)
+            }
+
+            if showingGame {
+                TerminalGameView {
+                    withAnimation(.easeOut(duration: 0.25)) {
+                        showingGame = false
+                        screen = .main
+                    }
+                }
+                .transition(.opacity)
             }
         }
     }
@@ -132,6 +153,7 @@ private enum MenuScreen {
     case main
     case play
     case settings
+    case game
 }
 
 enum ScornColor {
