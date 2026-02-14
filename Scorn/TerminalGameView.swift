@@ -218,12 +218,17 @@ final class ScornGameModel: ObservableObject {
     @Published private(set) var passage: Int = 1
     @Published private(set) var watch: Int = 1
     @Published private(set) var isDead = false
+    @Published private(set) var playerLegitimacy = 40
 
     private let seed: UInt64
     private var rng: SeededRNG
 
     private var world: World
     private var locationsByID: [Int: Location] = [:]
+    private var settlementStateByID: [Int: SettlementState] = [:]
+    private var globalState = GlobalState(resourceClimate: 50, pressureClimate: 50, entropy: 26)
+    private var simTick = 0
+    private var autonomousTask: Task<Void, Never>?
 
     private var currentLocationID: Int
     private var visitCountByLocation: [Int: Int] = [:]
@@ -253,6 +258,8 @@ final class ScornGameModel: ObservableObject {
             wearByLocation[location.id] = 46 + Int(stableHash(seed: seed, values: [UInt64(location.id), 99]) % 30)
         }
 
+        initializeSimulationState()
+        startAutonomousSimulation()
         restart()
     }
 
@@ -275,7 +282,7 @@ final class ScornGameModel: ObservableObject {
     }
 
     var statusHeader: String {
-        "Condition: \(conditionBand(for: vitality, kind: .vitality))  Hunger: \(conditionBand(for: hunger, kind: .hunger))  Thirst: \(conditionBand(for: thirst, kind: .thirst))"
+        "Condition: \(conditionBand(for: vitality, kind: .vitality))  Hunger: \(conditionBand(for: hunger, kind: .hunger))  Thirst: \(conditionBand(for: thirst, kind: .thirst))  Legitimacy: \(legitimacyBand)"
     }
 
     fileprivate var usableItems: [ItemOption] {
@@ -301,6 +308,10 @@ final class ScornGameModel: ObservableObject {
         hunger = 35
         attention = 14
         hiddenDrift = 18
+        playerLegitimacy = 40
+        simTick = 0
+        globalState = GlobalState(resourceClimate: 50, pressureClimate: 50, entropy: 26)
+        initializeSimulationState()
 
         inventory = [.water: 1, .ration: 1, .bandage: 0, .scrap: 1]
 
@@ -311,6 +322,7 @@ final class ScornGameModel: ObservableObject {
         momentLine = "You wake cold, with grit between your teeth."
         distantLine = "Somewhere beyond the walls, water keeps time."
         enterCurrentLocation(incrementVisit: true)
+        startAutonomousSimulation()
     }
 
     func closeItems() {
@@ -321,6 +333,7 @@ final class ScornGameModel: ObservableObject {
         guard !isDead else { return }
 
         tick(timeCost: 2, baseRisk: 8)
+        applyPlayerInfluence(.rest)
 
         vitality += 10
         thirst += 5
@@ -352,6 +365,7 @@ final class ScornGameModel: ObservableObject {
 
         if roll < hazardChance {
             vitality -= 6 + Int(rng.nextInt(max: 6))
+            applyPlayerInfluence(.search(risky: true))
             if location.kind.isExterior {
                 momentLine = "Loose stone slips beneath you. You catch yourself too late."
             } else {
@@ -360,8 +374,10 @@ final class ScornGameModel: ObservableObject {
         } else if roll < hazardChance + findChance {
             let found = weightedFoundItem(for: location)
             gain(found, amount: 1)
+            applyPlayerInfluence(.search(risky: false))
             momentLine = found.searchLine(for: location.kind)
         } else {
+            applyPlayerInfluence(.search(risky: true))
             momentLine = location.kind.isExterior
                 ? "You search the open ground and come up with dust and old nails."
                 : "You turn the room over and find nothing worth carrying."
@@ -382,6 +398,7 @@ final class ScornGameModel: ObservableObject {
         }
 
         tick(timeCost: 2, baseRisk: 11)
+        applyPlayerInfluence(.travel)
 
         let destination = chooseNeighbor(from: current.neighbors)
         currentLocationID = destination
@@ -406,6 +423,7 @@ final class ScornGameModel: ObservableObject {
         }
 
         tick(timeCost: 1, baseRisk: 4)
+        applyPlayerInfluence(.use(item))
 
         switch item {
         case .water:
@@ -515,6 +533,9 @@ final class ScornGameModel: ObservableObject {
         if visitCount > 1 || driftBand > 1 || wear < 30 {
             sentences.append(subtleShiftLine(for: location.id, driftBand: driftBand, wear: wear))
         }
+        if let localState = settlementStateByID[location.settlementID] {
+            sentences.append(settlementStateDescription(localState))
+        }
 
         return sentences.prefix(2).joined(separator: " ")
     }
@@ -558,12 +579,29 @@ final class ScornGameModel: ObservableObject {
         }
     }
 
+    private func settlementStateDescription(_ state: SettlementState) -> String {
+        let material: String
+        switch state.resourceStability {
+        case ..<30: material = "stores run thin"
+        case ..<60: material = "supplies move in tight cycles"
+        default: material = "storage lines hold for now"
+        }
+
+        let social: String
+        switch state.morale {
+        case ..<32: social = "faces stay guarded"
+        case ..<62: social = "people measure each word"
+        default: social = "voices carry a cautious warmth"
+        }
+        return "In the settlement, \(material) and \(social)."
+    }
+
     private func distantWhisper(around location: Location, driftBand: Int) -> String {
         let local = realizeLocationIfNeeded(location.id)
         let nearbySettlement = world.settlementsByID[location.settlementID]!
         let mood = pick(driftLexicon[driftBand]!.distantMoods, locationID: location.id, salt: 42 + passage)
         let place = pick(settlementLexicon[nearbySettlement.type]!.distantPlaces, locationID: location.id, salt: 43)
-        return "\(mood) from \(place), then quiet again near \(local.memoryMark)."
+        return "\(mood) from \(place), then quiet again near \(local.memoryMark). \(settlementContextLine(settlementID: location.settlementID))"
     }
 
     private func tick(timeCost: Int, baseRisk: Int) {
@@ -580,13 +618,14 @@ final class ScornGameModel: ObservableObject {
     }
 
     private func worldDrift(timeCost: Int) {
-        hiddenDrift = min(100, hiddenDrift + timeCost + Int(rng.nextInt(max: 3)))
+        runAutonomousWorldSimulation(pulses: max(1, timeCost))
 
         let passes = 1 + Int(rng.nextInt(max: 3))
         for _ in 0..<passes {
             let index = Int(rng.nextInt(max: UInt64(world.locations.count)))
             let id = world.locations[index].id
-            wearByLocation[id, default: 50] = max(0, wearByLocation[id, default: 50] - Int(rng.nextInt(max: 3)))
+            let wearFloor = max(4, Int(settlementWearFloor(for: id)))
+            wearByLocation[id, default: 50] = max(wearFloor, wearByLocation[id, default: 50] - Int(rng.nextInt(max: 3)))
         }
     }
 
@@ -718,11 +757,250 @@ final class ScornGameModel: ObservableObject {
     }
 
     private var driftBandValue: Int {
-        switch hiddenDrift {
+        let pressure = Int(currentSettlementState?.factionPressure ?? Double(hiddenDrift))
+        switch max(hiddenDrift, pressure) {
         case ..<30: return 0
         case ..<58: return 1
         default: return 2
         }
+    }
+
+    private var legitimacyBand: String {
+        switch playerLegitimacy {
+        case ..<25: return "shunned"
+        case ..<45: return "uncertain"
+        case ..<70: return "known"
+        default: return "trusted"
+        }
+    }
+
+    private var currentSettlementState: SettlementState? {
+        guard let location = locationsByID[currentLocationID] else { return nil }
+        return settlementStateByID[location.settlementID]
+    }
+
+    private func initializeSimulationState() {
+        settlementStateByID = [:]
+        for settlement in world.settlements {
+            settlementStateByID[settlement.id] = SettlementState(
+                resourceStability: 40 + Double(rng.nextInt(max: 36)),
+                infrastructureDurability: 45 + Double(rng.nextInt(max: 32)),
+                morale: 35 + Double(rng.nextInt(max: 38)),
+                factionPressure: 30 + Double(rng.nextInt(max: 40)),
+                leader: nil
+            )
+        }
+    }
+
+    private func startAutonomousSimulation() {
+        autonomousTask?.cancel()
+        autonomousTask = Task { [weak self] in
+            while let self, !Task.isCancelled {
+                try? await Task.sleep(nanoseconds: 2_000_000_000)
+                guard !self.isDead else { continue }
+                self.runAutonomousWorldSimulation(pulses: 1)
+                if self.randomPercent() < 35 {
+                    self.refreshNarrative()
+                }
+            }
+        }
+    }
+
+    private func runAutonomousWorldSimulation(pulses: Int) {
+        guard !world.settlements.isEmpty else { return }
+
+        for _ in 0..<max(1, pulses) {
+            simTick += 1
+            var nextStates = settlementStateByID
+
+            for settlement in world.settlements {
+                guard var local = settlementStateByID[settlement.id] else { continue }
+                let neighborStates = world.settlementLinks[settlement.id, default: []].compactMap { settlementStateByID[$0] }
+                let neighbor = aggregate(neighborStates)
+                let turbulence = (Double(Int(rng.nextInt(max: 201))) - 100.0) / 100.0
+                let systemicPulse = sin(Double(simTick + settlement.id) * 0.21) * 1.2
+
+                updateLeaderIfNeeded(settlementID: settlement.id, state: &local)
+                let leaderBias = local.leader?.bias ?? SettlementBias.zero
+
+                local.resourceStability += (52 + globalState.resourceClimate * 0.12 - local.resourceStability) * 0.08
+                local.resourceStability += (neighbor.resourceStability - local.resourceStability) * 0.12
+                local.resourceStability += leaderBias.resource + turbulence * 0.6 + systemicPulse * 0.4
+
+                local.infrastructureDurability += (55 - local.infrastructureDurability) * 0.06
+                local.infrastructureDurability += (neighbor.infrastructureDurability - local.infrastructureDurability) * 0.1
+                local.infrastructureDurability += leaderBias.infrastructure + turbulence * 0.4
+
+                local.factionPressure += (globalState.pressureClimate - local.factionPressure) * 0.07
+                local.factionPressure += (neighbor.factionPressure - local.factionPressure) * 0.14
+                local.factionPressure += leaderBias.pressure + max(0, 60 - local.resourceStability) * 0.04
+                local.factionPressure += max(0, 58 - local.infrastructureDurability) * 0.03 + turbulence * 0.7
+
+                local.morale += (50 - local.morale) * 0.05
+                local.morale += (neighbor.morale - local.morale) * 0.1
+                local.morale += leaderBias.morale
+                local.morale += (local.resourceStability - 50) * 0.03
+                local.morale -= max(0, local.factionPressure - 55) * 0.05
+                local.morale += turbulence * 0.5
+
+                nextStates[settlement.id] = clampSettlementState(local)
+            }
+
+            settlementStateByID = nextStates
+
+            globalState.resourceClimate += (50 - globalState.resourceClimate) * 0.03 + (Double(Int(rng.nextInt(max: 11))) - 5) * 0.18
+            globalState.pressureClimate += (52 - globalState.pressureClimate) * 0.03 + (Double(Int(rng.nextInt(max: 13))) - 6) * 0.2
+            globalState.entropy += (28 - globalState.entropy) * 0.04 + (Double(Int(rng.nextInt(max: 9))) - 4) * 0.28
+
+            globalState.resourceClimate = clamp(globalState.resourceClimate, min: 8, max: 92)
+            globalState.pressureClimate = clamp(globalState.pressureClimate, min: 8, max: 92)
+            globalState.entropy = clamp(globalState.entropy, min: 6, max: 95)
+        }
+
+        if let current = currentSettlementState {
+            hiddenDrift = min(100, Int((current.factionPressure * 0.58) + (globalState.entropy * 0.42)))
+        } else {
+            hiddenDrift = min(100, max(12, hiddenDrift))
+        }
+    }
+
+    private func aggregate(_ states: [SettlementState]) -> SettlementState {
+        guard !states.isEmpty else {
+            return SettlementState(resourceStability: 50, infrastructureDurability: 50, morale: 50, factionPressure: 50, leader: nil)
+        }
+
+        let count = Double(states.count)
+        return SettlementState(
+            resourceStability: states.reduce(0) { $0 + $1.resourceStability } / count,
+            infrastructureDurability: states.reduce(0) { $0 + $1.infrastructureDurability } / count,
+            morale: states.reduce(0) { $0 + $1.morale } / count,
+            factionPressure: states.reduce(0) { $0 + $1.factionPressure } / count,
+            leader: nil
+        )
+    }
+
+    private func updateLeaderIfNeeded(settlementID: Int, state: inout SettlementState) {
+        if var leader = state.leader {
+            leader.tenure += 1
+            leader.influence += (abs(state.morale - state.factionPressure) > 18 ? 0.8 : -0.4)
+            leader.influence = clamp(leader.influence, min: 0, max: 100)
+            if leader.influence < 6 && randomPercent() < 45 {
+                state.leader = nil
+            } else {
+                state.leader = leader
+            }
+            return
+        }
+
+        let instability = (state.factionPressure - state.morale) + max(0, 45 - state.resourceStability) * 0.5
+        let emergenceChance = Int(clamp(instability * 0.22, min: 2, max: 22))
+        if randomPercent() >= emergenceChance { return }
+
+        let archetype: LeaderArchetype
+        switch Int(rng.nextInt(max: 3)) {
+        case 0: archetype = .warden
+        case 1: archetype = .broker
+        default: archetype = .oracle
+        }
+
+        state.leader = EmergentLeader(
+            name: emergentLeaderName(for: settlementID, archetype: archetype),
+            archetype: archetype,
+            influence: 32 + Double(rng.nextInt(max: 35)),
+            tenure: 1,
+            bias: archetype.bias
+        )
+    }
+
+    private func emergentLeaderName(for settlementID: Int, archetype: LeaderArchetype) -> String {
+        let pool: [String]
+        switch archetype {
+        case .warden:
+            pool = ["Mara Ironwatch", "The Gate Warden", "Knuckle Ward", "Sable Keeper"]
+        case .broker:
+            pool = ["Vey Ledger", "Nailhand Broker", "Tallow Voice", "Iris of Debts"]
+        case .oracle:
+            pool = ["Ash Cantor", "The Lamp Witness", "Votive Hush", "Sister Emberline"]
+        }
+        return pool[Int(stableHash(seed: seed, values: [UInt64(settlementID), UInt64(simTick), 701]) % UInt64(pool.count))]
+    }
+
+    private func clampSettlementState(_ state: SettlementState) -> SettlementState {
+        var result = state
+        result.resourceStability = clamp(result.resourceStability, min: 8, max: 92)
+        result.infrastructureDurability = clamp(result.infrastructureDurability, min: 8, max: 92)
+        result.morale = clamp(result.morale, min: 8, max: 92)
+        result.factionPressure = clamp(result.factionPressure, min: 8, max: 92)
+        if var leader = result.leader {
+            leader.influence = clamp(leader.influence, min: 0, max: 100)
+            result.leader = leader
+        }
+        return result
+    }
+
+    private func settlementWearFloor(for locationID: Int) -> Double {
+        guard let settlementID = locationsByID[locationID]?.settlementID, let state = settlementStateByID[settlementID] else {
+            return 4
+        }
+        return clamp(12 + state.infrastructureDurability * 0.24 - globalState.entropy * 0.1, min: 4, max: 42)
+    }
+
+    private func settlementContextLine(settlementID: Int) -> String {
+        guard let state = settlementStateByID[settlementID] else { return "" }
+
+        let pressureTone: String
+        switch state.factionPressure {
+        case ..<33: pressureTone = "The faction lines feel diffuse tonight."
+        case ..<60: pressureTone = "Pressure holds at a muttered simmer."
+        default: pressureTone = "Faction pressure is climbing, taut and public."
+        }
+
+        if let leader = state.leader, leader.influence > 24 {
+            return "\(pressureTone) \(leader.name) pulls local decisions \(leader.archetype.voice)."
+        }
+        return pressureTone
+    }
+
+    private func applyPlayerInfluence(_ action: PlayerAction) {
+        guard let location = locationsByID[currentLocationID], var state = settlementStateByID[location.settlementID] else { return }
+
+        var legitimacyDelta = 0
+        switch action {
+        case .rest:
+            state.morale += 0.8
+            state.factionPressure -= 0.6
+            legitimacyDelta = state.factionPressure > 58 ? 1 : 0
+        case .travel:
+            state.factionPressure += 0.5
+            state.infrastructureDurability -= 0.2
+        case .search(let risky):
+            state.resourceStability -= risky ? 1.4 : 0.6
+            state.infrastructureDurability -= risky ? 0.8 : 0.3
+            state.factionPressure += risky ? 1.2 : 0.5
+            legitimacyDelta = risky ? -1 : 1
+        case .use(let item):
+            switch item {
+            case .water:
+                state.resourceStability -= 0.3
+                legitimacyDelta = -1
+            case .ration:
+                state.resourceStability -= 0.5
+                legitimacyDelta = -1
+            case .bandage:
+                state.morale += 1.1
+                legitimacyDelta = 1
+            case .scrap:
+                state.infrastructureDurability += 0.6
+                legitimacyDelta = 1
+            }
+        }
+
+        settlementStateByID[location.settlementID] = clampSettlementState(state)
+        playerLegitimacy = min(100, max(0, playerLegitimacy + legitimacyDelta))
+    }
+
+    private func clamp(_ value: Double, min minimum: Double, max maximum: Double) -> Double {
+        Swift.min(Swift.max(value, minimum), maximum)
     }
 
     private func consume(_ item: ItemID, amount: Int) -> Bool {
@@ -784,6 +1062,10 @@ final class ScornGameModel: ObservableObject {
         hunger = min(max(hunger, 0), 100)
         attention = min(max(attention, 0), 100)
     }
+
+    deinit {
+        autonomousTask?.cancel()
+    }
 }
 
 private struct RealizedLocation {
@@ -832,10 +1114,76 @@ private enum ConditionKind {
     case thirst
 }
 
+private enum PlayerAction {
+    case rest
+    case search(risky: Bool)
+    case travel
+    case use(ItemID)
+}
+
+private struct SettlementState {
+    var resourceStability: Double
+    var infrastructureDurability: Double
+    var morale: Double
+    var factionPressure: Double
+    var leader: EmergentLeader?
+}
+
+private struct GlobalState {
+    var resourceClimate: Double
+    var pressureClimate: Double
+    var entropy: Double
+}
+
+private struct SettlementBias {
+    let resource: Double
+    let infrastructure: Double
+    let morale: Double
+    let pressure: Double
+
+    static let zero = SettlementBias(resource: 0, infrastructure: 0, morale: 0, pressure: 0)
+}
+
+private struct EmergentLeader {
+    let name: String
+    let archetype: LeaderArchetype
+    var influence: Double
+    var tenure: Int
+    let bias: SettlementBias
+}
+
+private enum LeaderArchetype {
+    case warden
+    case broker
+    case oracle
+
+    var bias: SettlementBias {
+        switch self {
+        case .warden:
+            return SettlementBias(resource: -0.15, infrastructure: 0.35, morale: -0.05, pressure: 0.45)
+        case .broker:
+            return SettlementBias(resource: 0.4, infrastructure: 0.1, morale: 0.2, pressure: 0.1)
+        case .oracle:
+            return SettlementBias(resource: -0.05, infrastructure: -0.1, morale: 0.45, pressure: 0.25)
+        }
+    }
+
+    var voice: String {
+        switch self {
+        case .warden: return "through enforcement"
+        case .broker: return "through trade bargains"
+        case .oracle: return "through ritual authority"
+        }
+    }
+}
+
 private struct World {
     let areas: [Area]
     let settlements: [Settlement]
+    let structures: [Structure]
+    let rooms: [Room]
     let locations: [Location]
+    let settlementLinks: [Int: [Int]]
     let startLocationID: Int
 
     var areasByID: [Int: Area] {
@@ -844,6 +1192,14 @@ private struct World {
 
     var settlementsByID: [Int: Settlement] {
         Dictionary(uniqueKeysWithValues: settlements.map { ($0.id, $0) })
+    }
+
+    var structuresByID: [Int: Structure] {
+        Dictionary(uniqueKeysWithValues: structures.map { ($0.id, $0) })
+    }
+
+    var roomsByID: [Int: Room] {
+        Dictionary(uniqueKeysWithValues: rooms.map { ($0.id, $0) })
     }
 }
 
@@ -860,7 +1216,26 @@ private struct Settlement {
     let type: SettlementType
     let areaID: Int
     let locationIDs: [Int]
+    let structureIDs: [Int]
     let hubLocationID: Int
+}
+
+private struct Structure {
+    let id: Int
+    let name: String
+    let type: StructureType
+    let areaID: Int
+    let settlementID: Int
+    let anchorLocationID: Int
+    let roomIDs: [Int]
+}
+
+private struct Room {
+    let id: Int
+    let name: String
+    let areaID: Int
+    let settlementID: Int
+    let structureID: Int
 }
 
 private struct Location {
@@ -1069,6 +1444,8 @@ private struct WorldGenerator {
 
         var areas: [Area] = []
         var settlements: [Settlement] = []
+        var structures: [Structure] = []
+        var rooms: [Room] = []
         var locations: [Location] = []
 
         var locationByID: [Int: Location] = [:]
@@ -1076,8 +1453,11 @@ private struct WorldGenerator {
         var nextAreaID = 1
         var nextSettlementID = 1
         var nextLocationID = 1
+        var nextStructureID = 1
+        var nextRoomID = 1
 
         var areaHubByArea: [Int: Int] = [:]
+        var settlementLinkSets: [Int: Set<Int>] = [:]
 
         for areaIndex in 0..<areaCount {
             let areaID = nextAreaID
@@ -1090,6 +1470,7 @@ private struct WorldGenerator {
             var settlementIDs: [Int] = []
 
             var previousSettlementHub: Int?
+            var previousSettlementID: Int?
 
             for settlementIndex in 0..<settlementCount {
                 let settlementID = nextSettlementID
@@ -1101,6 +1482,7 @@ private struct WorldGenerator {
                 let settlementName = settlementName(for: settlementType, areaID: areaID, settlementID: settlementID)
 
                 var settlementLocationIDs: [Int] = []
+                var settlementStructureIDs: [Int] = []
 
                 let hubID = nextLocationID
                 nextLocationID += 1
@@ -1142,6 +1524,33 @@ private struct WorldGenerator {
                     settlementLocationIDs.append(structureID)
                     locations.append(structure)
                     locationByID[structureID] = structure
+
+                    let structureNodeID = nextStructureID
+                    nextStructureID += 1
+                    let roomCount = 1 + Int(rng.nextInt(max: 2))
+                    var roomIDs: [Int] = []
+                    for roomIndex in 0..<roomCount {
+                        let roomID = nextRoomID
+                        nextRoomID += 1
+                        roomIDs.append(roomID)
+                        rooms.append(Room(
+                            id: roomID,
+                            name: roomName(for: structureType, roomID: roomID, roomIndex: roomIndex),
+                            areaID: areaID,
+                            settlementID: settlementID,
+                            structureID: structureNodeID
+                        ))
+                    }
+                    structures.append(Structure(
+                        id: structureNodeID,
+                        name: structureName,
+                        type: structureType,
+                        areaID: areaID,
+                        settlementID: settlementID,
+                        anchorLocationID: structureID,
+                        roomIDs: roomIDs
+                    ))
+                    settlementStructureIDs.append(structureNodeID)
 
                     let connectorID = nextLocationID
                     nextLocationID += 1
@@ -1194,9 +1603,14 @@ private struct WorldGenerator {
 
                     addEdge(a: previousSettlementHub, b: transitID, map: &locationByID)
                     addEdge(a: transitID, b: hubID, map: &locationByID)
+                    if let previousSettlementID {
+                        settlementLinkSets[previousSettlementID, default: []].insert(settlementID)
+                        settlementLinkSets[settlementID, default: []].insert(previousSettlementID)
+                    }
                 }
 
                 previousSettlementHub = hubID
+                previousSettlementID = settlementID
 
                 settlements.append(Settlement(
                     id: settlementID,
@@ -1204,6 +1618,7 @@ private struct WorldGenerator {
                     type: settlementType,
                     areaID: areaID,
                     locationIDs: settlementLocationIDs,
+                    structureIDs: settlementStructureIDs,
                     hubLocationID: hubID
                 ))
             }
@@ -1239,6 +1654,13 @@ private struct WorldGenerator {
                 locationByID[bridgeID] = bridge
                 addEdge(a: leftHub, b: bridgeID, map: &locationByID)
                 addEdge(a: bridgeID, b: rightHub, map: &locationByID)
+                if
+                    let leftSettlementID = locationByID[leftHub]?.settlementID,
+                    let rightSettlementID = locationByID[rightHub]?.settlementID
+                {
+                    settlementLinkSets[leftSettlementID, default: []].insert(rightSettlementID)
+                    settlementLinkSets[rightSettlementID, default: []].insert(leftSettlementID)
+                }
             }
         }
 
@@ -1249,11 +1671,15 @@ private struct WorldGenerator {
         }
 
         let startLocationID = settlements.first?.hubLocationID ?? locations.first?.id ?? 1
+        let settlementLinks = settlementLinkSets.mapValues { Array($0).sorted() }
 
         return World(
             areas: areas,
             settlements: settlements,
+            structures: structures,
+            rooms: rooms,
             locations: locations,
+            settlementLinks: settlementLinks,
             startLocationID: startLocationID
         )
     }
@@ -1317,6 +1743,23 @@ private struct WorldGenerator {
             pool = ["Low Chapel", "Hush Nave", "Votive Hall", "Soot Shrine"]
         }
         return semanticPick(pool, id: structureID, salt: 23)
+    }
+
+    private func roomName(for type: StructureType, roomID: Int, roomIndex: Int) -> String {
+        let pool: [String]
+        switch type {
+        case .pumpWorks:
+            pool = ["Pressure Gallery", "Valve Duct", "Drain Chamber"]
+        case .storeRoom:
+            pool = ["Ration Rack", "Dry Alcove", "Tin Locker"]
+        case .barracks:
+            pool = ["Bunk Nook", "Watch Cot", "Blanket Bay"]
+        case .workshop:
+            pool = ["Bench Bay", "Parts Alcove", "Tool Cage"]
+        case .chapel:
+            pool = ["Votive Cell", "Quiet Pew", "Lamp Annex"]
+        }
+        return "\(semanticPick(pool, id: roomID ^ (roomIndex << 4), salt: 24)) \(roomIndex + 1)"
     }
 
     private func hubName(for settlementType: SettlementType, type: ExteriorType, hubID: Int) -> String {
